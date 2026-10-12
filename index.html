@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IPL Score Predictor | Score Comparison</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-ball">🏏</span><div><strong>IPL PREDICTOR</strong><small>IPL SCORE PREDICTION</small></div></div>
+      <div class="side-label">WORKSPACE</div>
+      <a class="nav-item active" href="#predictor">▦ &nbsp; Score prediction</a>
+      <a class="nav-item" href="#comparison">▤ &nbsp; Model comparison</a>
+      <a class="nav-item" href="#team-stats">◷ &nbsp; Team statistics</a>
+      <div class="sidebar-bottom"><span class="status-dot"></span> Dashboard ready <small>Random Forest · XGBoost</small></div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div><p class="eyebrow">IPL MATCH INTELLIGENCE</p><h1>Score Prediction Dashboard</h1><p class="subtitle">Compare Random Forest and XGBoost final-score predictions and explore team history.</p></div>
+        <div class="season-pill">● &nbsp; MODEL WORKSPACE</div>
+      </header>
+
+      <section class="summary-cards">
+        <article class="summary-card"><div class="card-icon purple">◎</div><div><span>Prediction models</span><strong>02</strong><small>Random Forest + XGBoost</small></div></article>
+        <article class="summary-card"><div class="card-icon green">↗</div><div><span>Input format</span><strong>T20 · 20 overs</strong><small>Current innings situation</small></div></article>
+        <article class="summary-card"><div class="card-icon orange">◷</div><div><span>Historical insights</span><strong>Head-to-head</strong><small>Based on your dataset</small></div></article>
+      </section>
+
+      <section class="panel predictor-panel" id="predictor">
+        <div class="section-heading"><div><p class="eyebrow">01 / MATCH SETUP</p><h2>Predict the final score</h2></div><span class="live-tag">● INPUT</span></div>
+        <form id="predictionForm">
+          <div class="form-grid">
+            <label>Batting team<select id="battingTeam" required><option value="">Select batting team</option></select></label>
+            <label>Bowling team<select id="bowlingTeam" required><option value="">Select bowling team</option></select></label>
+            <label class="wide">Venue<select id="venue" required><option value="">Select stadium / venue</option></select></label>
+            <label>Current over <div class="input-with-unit"><input id="currentOver" type="number" min="0" max="19.5" step="0.1" placeholder="e.g. 10.3" required><span>overs</span></div></label>
+            <label>Wickets lost <div class="input-with-unit"><input id="currentWickets" type="number" min="0" max="9" step="1" placeholder="0–9" required><span>/ 10</span></div></label>
+            <label>Current team score <div class="input-with-unit"><input id="currentRuns" type="number" min="0" max="300" step="1" placeholder="e.g. 86" required><span>runs</span></div></label>
+          </div>
+          <div class="form-footer"><p>Enter the current score as well as over and wickets for a more useful estimate.</p><button class="primary-button" type="submit">Predict final score <span>→</span></button></div>
+        </form>
+        <div class="form-error" id="formMessage" role="status"></div>
+      </section>
+
+      <section class="results-grid" id="results">
+        <article class="panel result-card rf-card"><div class="result-top"><span class="model-badge rf">RF</span><span class="model-name">RANDOM FOREST</span><span class="result-label">Predicted score</span></div><div class="score-line"><strong id="rfScore">—</strong><span>runs</span></div><div class="result-bottom"><span>Expected range</span><strong id="rfRange">—</strong></div></article>
+        <article class="panel result-card xgb-card"><div class="result-top"><span class="model-badge xgb">XGB</span><span class="model-name">XGBOOST</span><span class="result-label">Predicted score</span></div><div class="score-line"><strong id="xgbScore">—</strong><span>runs</span></div><div class="result-bottom"><span>Expected range</span><strong id="xgbRange">—</strong></div></article>
+        <article class="panel result-card consensus-card"><div class="result-top"><span class="model-badge avg">Σ</span><span class="model-name">ENSEMBLE VIEW</span></div><div class="score-line"><strong id="avgScore">—</strong><span>runs</span></div><p class="consensus-note">Average of the two model predictions</p><div class="progress-track"><span id="progressBar"></span></div><div class="result-bottom"><span>Projected total</span><strong id="projectionText">Waiting for input</strong></div></article>
+      </section>
+
+      <section class="panel" id="comparison">
+        <div class="section-heading"><div><p class="eyebrow">02 / SCORE COMPARISON</p><h2>Random Forest vs XGBoost</h2></div><span class="muted-text">Compare predicted final scores only</span></div>
+        <div class="comparison-layout"><div class="chart-wrap"><canvas id="scoreComparisonChart"></canvas></div><div class="metric-table-wrap"><table><thead><tr><th>Algorithm</th><th>Predicted final score</th></tr></thead><tbody><tr><td>Random Forest</td><td id="compareRfScore">— runs</td></tr><tr><td>XGBoost</td><td id="compareXgbScore">— runs</td></tr><tr><td>Score difference</td><td id="scoreDifference">— runs</td></tr></tbody></table><p class="table-note">Enter match details and select “Predict final score” to compare both algorithms.</p></div></div>
+      </section>
+
+      <section class="panel" id="team-stats">
+        <div class="section-heading"><div><p class="eyebrow">03 / HISTORICAL PERFORMANCE</p><h2>Team & head-to-head statistics</h2></div><span class="muted-text">Historical dataset insights</span></div>
+        <div class="stats-grid"><div class="stat-box"><span>Matches found</span><strong id="matchesPlayed">—</strong></div><div class="stat-box"><span id="batWinsLabel">Batting team wins</span><strong id="batWins">—</strong></div><div class="stat-box"><span id="bowlWinsLabel">Bowling team wins</span><strong id="bowlWins">—</strong></div><div class="stat-box"><span>Average first-innings score</span><strong id="averageScore">—</strong></div></div>
+        <div class="history-placeholder" id="historyMessage">Choose both teams and a venue, then predict to load historical statistics from the backend.</div>
+        <div class="table-scroll"><table id="historyTable"><thead><tr><th>Date / Season</th><th>Venue</th><th>Batting team score</th><th>Bowling team score</th><th>Winner</th></tr></thead><tbody><tr><td colspan="5" class="empty-cell">No historical matches loaded yet.</td></tr></tbody></table></div>
+      </section>
+      <footer>IPL Score Predictor · Random Forest & XGBoost · Predictions are estimates, not guarantees.</footer>
+    </main>
+  </div>
+  <script src="/static/javascript/dashboard.js"></script>
+</body>
+</html>
